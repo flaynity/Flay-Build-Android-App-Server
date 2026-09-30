@@ -1,7 +1,7 @@
 const CORS={"Access-Control-Allow-Origin":"*","Access-Control-Allow-Methods":"GET,POST,PUT,OPTIONS","Access-Control-Allow-Headers":"Content-Type,X-Build-Token"};
 const out=(v,s=200)=>new Response(JSON.stringify(v),{status:s,headers:{"Content-Type":"application/json",...CORS}});
 const name=v=>String(v||"flay-app").replace(/[^a-zA-Z0-9._-]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80)||"flay-app";
-async function gh(env,path,init={}){const r=await fetch("https://api.github.com"+path,{...init,headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+env.GITHUB_TOKEN,"X-GitHub-Api-Version":"2026-03-10","Content-Type":"application/json"}});const t=await r.text();let d;try{d=t?JSON.parse(t):null}catch(_){d=t}if(!r.ok)throw new Error("GitHub API "+r.status+": "+String(d?.message||t||"request failed"));return d}
+async function gh(env,path,init={}){const r=await fetch("https://api.github.com"+path,{...init,headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+env.GITHUB_TOKEN,"X-GitHub-Api-Version":"2026-03-10","User-Agent":"Flay-Build-Android-App-Server","Content-Type":"application/json"}});const t=await r.text();let d;try{d=t?JSON.parse(t):null}catch(_){d=t}if(!r.ok)throw new Error("GitHub API "+r.status+": "+String(d?.message||t||"request failed"));return d}
 async function jobGet(env,id){const o=await env.BUILD_BUCKET.get("jobs/"+id+".json");return o?o.json():null}
 async function jobPut(env,j){await env.BUILD_BUCKET.put("jobs/"+j.id+".json",JSON.stringify(j),{httpMetadata:{contentType:"application/json"}})}
 function auth(r,e){return !!e.INTERNAL_TOKEN&&r.headers.get("X-Build-Token")===e.INTERNAL_TOKEN}
