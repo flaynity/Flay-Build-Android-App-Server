@@ -1,27 +1,14 @@
 {
   "name": "flay-ai",
   "main": "src/index.js",
-  "compatibility_date": "2026-09-29",
-  "containers": [
-    {
-      "class_name": "FlayBuildContainer",
-      "image": "./Dockerfile",
-      "max_instances": 1,
-      "instance_type": "standard-2"
-    }
-  ],
-  "durable_objects": {
-    "bindings": [
-      {
-        "name": "FLay_BUILD_SERVER",
-        "class_name": "FlayBuildContainer"
-      }
-    ]
+  "compatibility_date": "2026-09-30",
+  "vars": {
+    "GITHUB_REPO": "flaynity/Flay-Build-Android-App-Server",
+    "GITHUB_WORKFLOW": "android-build.yml",
+    "BUILD_SERVER_URL": "https://flay-ai.flaynity.workers.dev"
   },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["FlayBuildContainer"]
-    }
-  ]
+  "r2_buckets": [
+    { "binding": "BUILD_BUCKET", "bucket_name": "flay-ai-builds" }
+  ],
+  "secrets": { "required": ["GITHUB_TOKEN", "INTERNAL_TOKEN"] }
 }
