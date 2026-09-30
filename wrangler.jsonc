@@ -10,5 +10,11 @@
   "r2_buckets": [
     { "binding": "BUILD_BUCKET", "bucket_name": "flay-ai-builds" }
   ],
-  "secrets": { "required": ["GITHUB_TOKEN", "INTERNAL_TOKEN"] }
+  "secrets": { "required": ["GITHUB_TOKEN", "INTERNAL_TOKEN"] },
+  "exports": {
+    "FlayBuildContainer": {
+      "type": "durable-object",
+      "state": "deleted"
+    }
+  }
 }
