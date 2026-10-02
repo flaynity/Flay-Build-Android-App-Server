@@ -59,9 +59,10 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Prepare Android SDK
+      - name: Prepare Android SDK (no legacy setup-android action)
         run: |
           set -e
+          echo "Using direct Android SDK provisioning; android-actions/setup-android is intentionally not used."
           test -n "$ANDROID_HOME"
           SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -path '*/bin/sdkmanager' -print -quit)"
           if [ -z "$SDKMANAGER" ]; then
@@ -74,12 +75,6 @@ jobs:
           echo "PATH=$PATH" >> "$GITHUB_ENV"
           yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
           "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
-
-      - name: Build debug APK
-        uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: "17"
 
       - name: Build debug APK
         working-directory: ${{ steps.project.outputs.root }}
