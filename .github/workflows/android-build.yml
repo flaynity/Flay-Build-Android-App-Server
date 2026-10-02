@@ -59,15 +59,21 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Prepare Android SDK
         run: |
+          set -e
           test -n "$ANDROID_HOME"
-          test -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" || command -v sdkmanager >/dev/null 2>&1
-          yes | sdkmanager --licenses >/dev/null 2>&1 || true
-          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -path '*/bin/sdkmanager' -print -quit)"
+          if [ -z "$SDKMANAGER" ]; then
+            echo "No Android SDK command-line tools sdkmanager was found on the GitHub runner."
+            exit 1
+          fi
+          export PATH="$(dirname "$SDKMANAGER"):$PATH"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "PATH=$PATH" >> "$GITHUB_ENV"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Build debug APK
         uses: actions/setup-java@v6
