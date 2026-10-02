@@ -59,10 +59,12 @@ jobs:
           export ANDROID_SDK_ROOT="$ANDROID_HOME"
           echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
           echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
-          if command -v sdkmanager >/dev/null 2>&1; then
-            yes | sdkmanager --licenses >/dev/null 2>&1 || true
-            sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0" >/dev/null || true
+          if ! command -v sdkmanager >/dev/null 2>&1; then
+            echo "sdkmanager is not available on the GitHub runner."
+            exit 1
           fi
+          yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
 
       - name: Setup Java 17
         uses: actions/setup-java@v6
